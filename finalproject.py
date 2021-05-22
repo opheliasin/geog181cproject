@@ -114,47 +114,48 @@ except Exception as e:
     print "An error occurred on line %i" % tb.tb_lineno
     print str(e)
 
- # # # # # # #
+ # # # # # # # Insert Cursor # # # # # # #
 
-folderPath = r"C:\Users\cnmre\OneDrive\Documents\181C GIS Programming and Dev\geog181cproject"
+#Insert cursor to create and display new table showing 10 nearest vaccination
+#sites with most relevant information for user 
+
+folderPath = r"C:\Users\cnmre\OneDrive\Documents\181C GIS Programming and Dev\covid19_vaccination_sites_la_county"
 
 import arcpy, os
 
 arcpy.env.workspace = folderPath
 arcpy.overwriteOutput = True
 
-vaccinationSites = os.path.join(folderPath, "Covid-19_Vaccination_Provider_Locations_in_the_United_States.shp")
+#define local variables
+vaccinationSites = os.path.join(folderPath, "covid19_vaccination_sites_la_county.shp")
 outTable = "Top_Ten_Nearest_Vaccination_Sites.dbf"
-newFields = [('NAME', 'TEXT'),('DISTANCE', 'FLOAT'), ('ADDRESS', 'TEXT'), \
-             ('OPERATIONAL_HRS', 'TEXT'),('DRIVE_THROUGH', 'TEXT'), \
-             ('APPT_REQUIRED', 'TEXT'),('CALL_REQUIRED', 'TEXT'), \
-             ('PHONE', 'TEXT'), ('WEBSITE', 'TEXT')]  
+newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), \
+             ('OPER_HRS', 'TEXT'),('DRIVE_THRU', 'TEXT'), \
+             ('APPT_REQ', 'TEXT'),('CALL_REQ', 'TEXT'), \
+             ('PHONE', 'TEXT'), ('WEBSITE', 'TEXT')]
 
+#create a new table and aadd 8 new fields
 arcpy.CreateTable_management(folderPath, outTable)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
-del field
 
-insert = ['NAME', 'DISTANCE', 'ADDRESS', 'OPERATIONAL_HRS', 'DRIVE_THROUGH', \
-          'APPT_REQUIRED', 'CALL_REQUIRED', 'PHONE', 'WEBSITE']
+#insert cursor
+insert = ['NAME', 'ADDRESS', 'OPER_HRS', 'DRIVE_THRU', \
+          'APPT_REQ', 'CALL_REQ', 'PHONE', 'WEBSITE']
 insertCursor = arcpy.da.InsertCursor(outTable, insert)
-SQL = arcpy.AddFieldDelimiters(vaccinationSites, "Distance") + ">= Value"
+SQL = arcpy.AddFieldDelimiters(vaccinationSites, "fid_1") + "<= 10"
 
-originalFields = ['name', 'distance', 'fulladdr', 'operhours',\
+#search cursor and insert rows for top 10 rows (given that original table is sorted by distance)
+originalFields = ['name', 'fulladdr', 'operhours',\
                   'drive_thro', 'appt_only', 'call_first', \
-                  'phone', 'agencyurl')
+                  'phone', 'agencyurl']
 searchCursor = arcpy.da.SearchCursor(vaccinationSites, originalFields, SQL)
 for row in searchCursor:
-    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]
-    outcursor.insertRow(rows)
-del row, rows
+    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]
+    insertCursor.insertRow(rows)
 
-rows = arcpy.da.SearchCursor(outTable, insert)
-for row in rows:
-    i = 0
-    for field in insert:
-        print (field, row[i])
-        i = i + 1
-del insertCursor, searchCursor, row, rows
+#clean up and unlock
+del field, insertCursor, searchCursor, row, rows
 
+print "Table successfully created!"
 
