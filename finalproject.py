@@ -63,26 +63,28 @@ print "done with using geometry object."
 
 # # # Network Analysis # # # In Progress -DY # # #
 
-#Import system modules
+folder_path = "C:/Users/daisyyan/Desktop/Network_Analysis"
+
 import arcpy
 from arcpy import env
+import os
 
 try:
     #Check out the Network Analyst extension license
     arcpy.CheckOutExtension("Network")
 
     #Set environment settings
-    env.workspace = folderpath
+    env.workspace = folder_path
     env.overwriteOutput = True
     
     #Set local variables
-    inNetworkDataset = "//Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari.shp"
+    inNetworkDataset = folder_path+"/Clipped_Streets/SDC_Edge_Source.shp"
     outNALayerName = "Vac_Sites"
-    impedanceAttribute = "Drivetime" #where is this attribute? -DY
+    impedanceAttribute = "Drivetime"
     accumulateAttributeName = ["Meters"] 
-    inFacilities = "//Warehouses" #change -DY
-    inIncidents = "//Stores" #change -DY
-    outLayerFile = "C://" + "/" + outNALayerName + ".lyr"
+    inFacilities = folder_path+"/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari.shp"
+    #inIncidents = "//Stores"
+    outLayerFile = folder_path + "/" + outNALayerName + ".lyr"
     
     #Create a new closest facility analysis layer. Apart from finding the drive 
     #time to the closest warehouse, we also want to find the total distance. So
@@ -95,23 +97,6 @@ try:
     #Get the layer object from the result object. The closest facility layer can 
     #now be referenced using the layer object.
     outNALayer = outNALayer.getOutput(0)
-    
-    #Get the names of all the sublayers within the closest facility layer.
-    subLayerNames = arcpy.na.GetNAClassNames(outNALayer)
-    #Stores the layer names that we will use later
-    facilitiesLayerName = subLayerNames["Facilities"] #change attribute -DY
-    incidentsLayerName = subLayerNames["Incidents"] #change attribute -DY
-    
-    ##Load the warehouses as Facilities using the default field mappings and 
-    ##search tolerance
-    #arcpy.na.AddLocations(outNALayer, facilitiesLayerName, inFacilities, "", "")
-    
-    ##Load the Stores as Incidents. Map the Name property from the NOM field
-    ##using field mappings
-    #fieldMappings = arcpy.na.NAClassFieldMappings(outNALayer, incidentsLayerName)
-    #fieldMappings["Name"].mappedFieldName = "NOM"
-    #arcpy.na.AddLocations(outNALayer, incidentsLayerName, inIncidents,
-                          #fieldMappings,"")
     
     #Solve the closest facility layer
     arcpy.na.Solve(outNALayer)
