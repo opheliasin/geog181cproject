@@ -134,7 +134,7 @@ newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), \
              ('APPT_REQ', 'TEXT'),('CALL_REQ', 'TEXT'), \
              ('PHONE', 'TEXT'), ('WEBSITE', 'TEXT')]
 
-#create a new table and aadd 8 new fields
+#create a new table and add 8 new fields 
 arcpy.CreateTable_management(folderPath, outTable)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
