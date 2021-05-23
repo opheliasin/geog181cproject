@@ -140,9 +140,9 @@ for field in newFields:
 #insert cursor
 insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'PHONE', 'WEBSITE']
 insertCursor = arcpy.da.InsertCursor(outTable, insert)
-SQL = arcpy.AddFieldDelimiters(vaccinationSites, "fid_1") + "<= 10"
 
 #search cursor and populate rows for top 10 rows (given that original table is sorted by distance)
+SQL = arcpy.AddFieldDelimiters(vaccinationSites, "fid_1") + "<= 10"
 originalFields = ['name', 'fulladdr', 'municipali', 'operhours', 'drive_thro', 'appt_only', 'call_first', 'phone', 'agencyurl']
 searchCursor = arcpy.da.SearchCursor(vaccinationSites, originalFields, SQL)
 for row in searchCursor:
