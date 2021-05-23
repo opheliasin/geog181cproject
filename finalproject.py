@@ -116,8 +116,7 @@ except Exception as e:
 
  # # # # # # # Table and Cursors # # # # # # #
 
-#Insert cursor to create and display new table showing 10 nearest vaccination
-#sites with most relevant information for user
+#Insert cursor to create and display new table showing 10 nearest vaccination sites with most relevant information for user
 
 folderPath = r"C:\Users\cnmre\OneDrive\Documents\181C GIS Programming and Dev\covid19_vaccination_sites_la_county"
 
