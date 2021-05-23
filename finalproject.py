@@ -114,10 +114,10 @@ except Exception as e:
     print "An error occurred on line %i" % tb.tb_lineno
     print str(e)
 
- # # # # # # # Insert Cursor # # # # # # #
+ # # # # # # # Insert Cursor and Search Cursor # # # # # # #
 
 #Insert cursor to create and display new table showing 10 nearest vaccination
-#sites with most relevant information for user 
+#sites with most relevant information for user
 
 folderPath = r"C:\Users\cnmre\OneDrive\Documents\181C GIS Programming and Dev\covid19_vaccination_sites_la_county"
 
@@ -129,33 +129,30 @@ arcpy.overwriteOutput = True
 #define local variables
 vaccinationSites = os.path.join(folderPath, "covid19_vaccination_sites_la_county.shp")
 outTable = "Top_Ten_Nearest_Vaccination_Sites.dbf"
-newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), \
-             ('OPER_HRS', 'TEXT'),('DRIVE_THRU', 'TEXT'), \
-             ('APPT_REQ', 'TEXT'),('CALL_REQ', 'TEXT'), \
-             ('PHONE', 'TEXT'), ('WEBSITE', 'TEXT')]
+newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'),('OPER_HRS', 'TEXT'),('DRIVE_THRU', 'TEXT'),\
+             ('APPT_REQ', 'TEXT'),('CALL_REQ', 'TEXT'), ('PHONE', 'TEXT'),('WEBSITE', 'TEXT')]
 
-#create a new table and add 8 new fields 
+#create a new table and add 8 new fields
 arcpy.CreateTable_management(folderPath, outTable)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
 
 #insert cursor
-insert = ['NAME', 'ADDRESS', 'OPER_HRS', 'DRIVE_THRU', \
-          'APPT_REQ', 'CALL_REQ', 'PHONE', 'WEBSITE']
+insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'PHONE', 'WEBSITE']
 insertCursor = arcpy.da.InsertCursor(outTable, insert)
 SQL = arcpy.AddFieldDelimiters(vaccinationSites, "fid_1") + "<= 10"
 
-#search cursor and insert rows for top 10 rows (given that original table is sorted by distance)
-originalFields = ['name', 'fulladdr', 'operhours',\
-                  'drive_thro', 'appt_only', 'call_first', \
-                  'phone', 'agencyurl']
+#search cursor and populate rows for top 10 rows (given that original table is sorted by distance)
+originalFields = ['name', 'fulladdr', 'municipali', 'operhours', 'drive_thro', 'appt_only', 'call_first', 'phone', 'agencyurl']
 searchCursor = arcpy.da.SearchCursor(vaccinationSites, originalFields, SQL)
 for row in searchCursor:
-    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7]
+    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8]
     insertCursor.insertRow(rows)
 
 #clean up and unlock
 del field, insertCursor, searchCursor, row, rows
 
 print "Table successfully created!"
+
+# # # # # # # End of Insert Cursor and Search Cursor # # # # # # # 
 
