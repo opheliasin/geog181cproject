@@ -114,7 +114,7 @@ except Exception as e:
     print "An error occurred on line %i" % tb.tb_lineno
     print str(e)
 
- # # # # # # # Insert Cursor and Search Cursor # # # # # # #
+ # # # # # # # Table and Cursors # # # # # # #
 
 #Insert cursor to create and display new table showing 10 nearest vaccination
 #sites with most relevant information for user
@@ -154,5 +154,5 @@ del field, insertCursor, searchCursor, row, rows
 
 print "Table successfully created!"
 
-# # # # # # # End of Insert Cursor and Search Cursor # # # # # # # 
+# # # # # # # End of Table and Cursors # # # # # # # 
 
