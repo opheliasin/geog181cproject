@@ -78,12 +78,12 @@ try:
     env.overwriteOutput = True
     
     #Set local variables
-    inNetworkDataset = folder_path+"/Clipped_Streets/SDC_Edge_Source.shp"
+    inNetworkDataset = folder_path+"/LA network/Other related dataset/LA_Network1_ND.nd"
     outNALayerName = "Vac_Sites"
-    impedanceAttribute = "Drivetime"
-    accumulateAttributeName = ["Meters"] 
+    impedanceAttribute = "Time"
+    accumulateAttributeName = ["Miles"] 
     inFacilities = folder_path+"/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari.shp"
-    #inIncidents = "//Stores"
+    #inIncidents = "//" #insert location shp file here
     outLayerFile = folder_path + "/" + outNALayerName + ".lyr"
     
     #Create a new closest facility analysis layer. Apart from finding the drive 
@@ -97,7 +97,24 @@ try:
     #Get the layer object from the result object. The closest facility layer can 
     #now be referenced using the layer object.
     outNALayer = outNALayer.getOutput(0)
+
+    #Get the names of all the sublayers within the closest facility layer.
+    subLayerNames = arcpy.na.GetNAClassNames(outNALayer)
+    #Stores the layer names that we will use later
+    facilitiesLayerName = subLayerNames["VacSites"]
+    incidentsLayerName = subLayerNames["Start"]
     
+    #Load the warehouses as Facilities using the default field mappings and 
+    #search tolerance
+    arcpy.na.AddLocations(outNALayer, facilitiesLayerName, inFacilities, "", "")
+    
+    #Load user location as incident. Map the Name property from the NOM field
+    #using field mappings
+    fieldMappings = arcpy.na.NAClassFieldMappings(outNALayer, incidentsLayerName)
+    #fieldMappings["Name"].mappedFieldName = "NOM"
+    #arcpy.na.AddLocations(outNALayer, incidentsLayerName, inIncidents,
+                          #fieldMappings,"")
+
     #Solve the closest facility layer
     arcpy.na.Solve(outNALayer)
     
