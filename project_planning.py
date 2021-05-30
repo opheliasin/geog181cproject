@@ -8,7 +8,68 @@
 
 
 ###########################RYUICHI########################################
+import arcpy, os
+from arcpy import env
+folderpath = r"C:\Users\RU313697\Desktop\GIS Programming\Final Project"
+arcpy.env.workspace = folderpath  
+arcpy.env.overwriteOutput = True 
 
+# get the mxd and the layout element list
+mxd = arcpy.mapping.MapDocument(folderpath+"/Network_Analysis.mxd")
+
+mxd.title = "GEOG181C Group Project Maps"
+mxd.author = "Mari Bouwman, Chalsea Montellano, Ryuichi Utsu, Ophelia Sin, Daisy Yan"
+
+lyr_list = arcpy.mapping.ListLayers(mxd)
+
+print lyr_list
+
+for lyr in lyr_list:
+    if lyr.name == "Selected Vaccination Site":
+        Vaccination_Site = lyr
+        if Vaccination_Site.supports("LABELCLASSES"):
+            Vaccination_Site.showClassLabels = True
+            Vaccination_Site.expression = "{}".format("name")
+            Vaccination_Site.showLabels = True
+            
+    if lyr.name == "Optimal Route":
+        Route = lyr
+
+# Create a new, empty pdf document for the mapbook
+pdf_filename = folderpath + r"\AutomatedMapping.pdf" #create empty pdf to store tmp maps
+if os.path.exists(pdf_filename):
+    os.remove(pdf_filename)
+finalPDF = arcpy.mapping.PDFDocumentCreate(pdf_filename)
+
+tmpPDF = folderpath + "/tmp.pdf" #create temp pdf to store maps
+    
+for row in arcpy.da.SearchCursor(Vaccination_Site, ["SHAPE@","name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to a Vaccination Site"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[1])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[2])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 7min, Total Distance: 3.4mil"
+
+for route in arcpy.da.SearchCursor(Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
+finalPDF.saveAndClose( )
+if os.path.exists(tmpPDF):
+    os.remove(tmpPDF)
+
+del mxd, tmpPDF, finalPDF, row,
+
+print "End of map production."
 
 
 ###########################CHALSEA########################################
