@@ -114,3 +114,38 @@ print "Table successfully created!"
 
 
 ###########################OPHELIA########################################
+vac_sites = folderpath + "/data/Covid-19_Vaccination_Provider_Locations_in_the_United_States/Covid-19_Vaccination_Provider_Locations_in_the_United_States.shp"
+arcpy.MakeFeatureLayer_management(vac_sites, "vac_sites")
+la_county = folderpath + "/data/County_Boundary/County_Boundary.shp"
+arcpy.MakeFeatureLayer_management(la_county, "la_county")
+arcpy.SelectLayerByLocation_management("vac_sites", "intersect", "la_county")
+
+p =[34.067565101060275, -118.45344143556794]
+pt = arcpy.Point()
+ptGeom = [] 
+pt.X = p[0]
+pt.Y = p[1]
+ptGeom.append(arcpy.PointGeometry(pt))
+
+out_path = folderpath
+out_name = "origin_point.shp"
+geometry_type = "POINT"
+template = ""
+has_m = "DISABLED"
+has_z = "DISABLED"
+spatial_reference = arcpy.SpatialReference("NAD 1983")
+
+if os.path.exists(out_name):
+    os.remove(out_name)
+
+arcpy.CreateFeatureclass_management(out_path, out_name, geometry_type, template, has_m, has_z, spatial_reference)
+arcpy.CopyFeatures_management(ptGeoms, out_name)
+
+where_clause = arcpy.AddFieldDelimiters("vac_sites", "appt_only") + "= 'No'"
+
+arcpy.SelectLayerByAttribute_management("vac_sites", "SUBSET_SELECTION", where_clause)
+
+vac_sites_selected = "vac_sites_selected.shp"
+arcpy.CreateFeatureclass_management(folderpath, vac_sites_selected, geometry_type, template, has_m, has_z, spatial_reference)
+arcpy.CopyFeatures_management("vac_sites", vac_sites_selected)
+
