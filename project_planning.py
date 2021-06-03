@@ -5,7 +5,74 @@
 
 ########################DAISY#############################################
 
+folder_path = "C:/Users/daisyyan/Desktop/Network_Analysis"
 
+import arcpy
+from arcpy import env
+import os
+
+#try:
+    #Check out the Network Analyst extension license
+arcpy.CheckOutExtension("Network")
+
+    #Set environment settings
+env.workspace = folder_path
+env.overwriteOutput = True
+    
+    #Set local variables
+inNetworkDataset = folder_path+"/LA network/Other related dataset/LA_Network1_ND.nd"
+outNALayerName = "Vac_Sites"
+impedanceAttribute = "Time"
+accumulateAttributeName = ["Miles"] 
+inFacilities = folder_path+"/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari.shp"
+inIncidents = folder_path+"/Origin Point/origin_point.shp" #insert location shp file here
+outLayerFile = folder_path + "/" + outNALayerName + ".lyr"
+    
+    #Create a new closest facility analysis layer. Apart from finding the drive 
+    #time to the closest warehouse, we also want to find the total distance. So
+    #we will accumulate the "Meters" impedance attribute.
+outNALayer = arcpy.na.MakeClosestFacilityLayer(inNetworkDataset,outNALayerName,
+                                                   impedanceAttribute,"TRAVEL_TO",
+                                                   "",1, accumulateAttributeName,
+                                                   "NO_UTURNS")
+    
+    #Get the layer object from the result object. The closest facility layer can 
+    #now be referenced using the layer object.
+outNALayer = outNALayer.getOutput(0)
+
+    #Get the names of all the sublayers within the closest facility layer.
+subLayerNames = arcpy.na.GetNAClassNames(outNALayer)
+
+    #Stores the layer names that we will use later
+facilitiesLayerName = subLayerNames["inFacilities"]
+incidentsLayerName = subLayerNames["inIncidents"]
+    
+    #Load the warehouses as Facilities using the default field mappings and 
+    #search tolerance
+arcpy.na.AddLocations(outNALayer, facilitiesLayerName, inFacilities, "", "")
+    
+    #Load user location as incident. Map the Name property from the NOM field
+    #using field mappings
+fieldMappings = arcpy.na.NAClassFieldMappings(outNALayer, incidentsLayerName)
+    #fieldMappings["Name"].mappedFieldName = "NOM"
+    #arcpy.na.AddLocations(outNALayer, incidentsLayerName, inIncidents,
+                          #fieldMappings,"")
+
+    #Solve the closest facility layer
+arcpy.na.Solve(outNALayer)
+    
+    #Save the solved closest facility layer as a layer file on disk with 
+    #relative paths
+arcpy.management.SaveToLayerFile(outNALayer,outLayerFile,"RELATIVE")
+    
+print "Script completed successfully"
+
+#except Exception as e:
+    ## If an error occurred, print line number and error message
+    #import traceback, sys
+    #tb = sys.exc_info()[2]
+    #print "An error occurred on line %i" % tb.tb_lineno
+    #print str(e)
 
 ###########################RYUICHI########################################
 import arcpy, os
