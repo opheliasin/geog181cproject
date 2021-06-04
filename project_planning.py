@@ -8,60 +8,364 @@
 
 
 ###########################RYUICHI########################################
-import arcpy, os
+import arcpy 
+import os
 from arcpy import env
 folderpath = r"C:\Users\RU313697\Desktop\GIS Programming\Final Project"
 arcpy.env.workspace = folderpath  
 arcpy.env.overwriteOutput = True 
 
 # get the mxd and the layout element list
-mxd = arcpy.mapping.MapDocument(folderpath+"/Network_Analysis.mxd")
+mxd = arcpy.mapping.MapDocument(folderpath+"/Final_Project_Mapping.mxd")
 
 mxd.title = "GEOG181C Group Project Maps"
 mxd.author = "Mari Bouwman, Chalsea Montellano, Ryuichi Utsu, Ophelia Sin, Daisy Yan"
 
 lyr_list = arcpy.mapping.ListLayers(mxd)
 
-print lyr_list
+site_names = ['CVS_Pharmacy_Westwood_Blvd', 'CVS_Pharmacy_SantaMonica_Blvd','Brent_Air_Pharmacy', 'West_Los_Angeles_VA_Medical_Center',
+               'Total_Testing_Solutions_Century_City', 'Rite_Aid','CVS_Weyburn','CVS_Wellworth', 'CVS_SanVicente','Ralphs_Pharmacy_Weyburn']      
 
-for lyr in lyr_list:
-    if lyr.name == "Selected Vaccination Site":
-        Vaccination_Site = lyr
-        if Vaccination_Site.supports("LABELCLASSES"):
-            Vaccination_Site.showClassLabels = True
-            Vaccination_Site.expression = "{}".format("name")
-            Vaccination_Site.showLabels = True
-            
-    if lyr.name == "Optimal Route":
-        Route = lyr
+route_names = ['Brent_Air_Pharmacy_Route', 'Rite_Aid_Route','CVS_San_Vicente_Route','Total_Testing_Solution_Route','CVS_Santa_Monica_Route','CVS_Weyburn_Route',
+               'CVS_Westwood_Route','Ralphs_Weyburn','West_LA_Medical_Center_Route','CVS_Wellworth_Route']
+    
 
 # Create a new, empty pdf document for the mapbook
-pdf_filename = folderpath + r"\AutomatedMapping.pdf" #create empty pdf to store tmp maps
+pdf_filename = folderpath + r"\Final_Project_Mapbook.pdf" #create empty pdf to store tmp maps
 if os.path.exists(pdf_filename):
     os.remove(pdf_filename)
 finalPDF = arcpy.mapping.PDFDocumentCreate(pdf_filename)
 
 tmpPDF = folderpath + "/tmp.pdf" #create temp pdf to store maps
+
+#1   
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'CVS_Pharmacy_Westwood_Blvd':
+        layer.visible = True
+        CVS_Westwood = layer
+    if layer.name == 'CVS_Westwood_Route':
+        layer.visible = True
+        CVS_Westwood_Route = layer
     
-for row in arcpy.da.SearchCursor(Vaccination_Site, ["SHAPE@","name","fulladdr"]):
+for row in arcpy.da.SearchCursor(CVS_Westwood,["name","fulladdr"]):
     #get data frame
     layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
     
     title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
-    title.text = "The Optimal Route from UCLA to a Vaccination Site"
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
     elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
-    elm1.text = "Name: " + str(row[1])
+    elm1.text = "Name: " + str(row[0])
     elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
-    elm2.text = "Address: " + str(row[2])
+    elm2.text = "Address: " + str(row[1])
     elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
-    elm3.text = "Total Travel Time: 7min, Total Distance: 3.4mil"
+    elm3.text = "Total Travel Time: 3 min, Total Distance: 1.2 mil"
 
-for route in arcpy.da.SearchCursor(Route, ["SHAPE@"]):
+for route in arcpy.da.SearchCursor(CVS_Westwood_Route, ["SHAPE@"]):
     layout_frame.extent = route[0].extent # customize extent
     layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
     
     arcpy.mapping.ExportToPDF(mxd, tmpPDF)
     finalPDF.appendPages(tmpPDF)
+#2
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'CVS_Pharmacy_SantaMonica_Blvd':
+        layer.visible = True
+        CVS_Santa_Monica = layer
+    if layer.name == 'CVS_Santa_Monica_Route':
+        layer.visible = True
+        CVS_Santa_Monica_Route = layer
+    
+for row in arcpy.da.SearchCursor(CVS_Santa_Monica,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 6 min, Total Distance: 4.4 mil"
+
+for route in arcpy.da.SearchCursor(CVS_Santa_Monica_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
+#3
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'Brent_Air_Pharmacy':
+        layer.visible = True
+        Brent_Air_Pharmacy = layer
+    if layer.name == 'Brent_Air_Pharmacy_Route':
+        layer.visible = True
+        Brent_Air_Pharmacy_Route = layer
+    
+for row in arcpy.da.SearchCursor(Brent_Air_Pharmacy,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 4 min, Total Distance: 2.2 mil"
+
+for route in arcpy.da.SearchCursor(Brent_Air_Pharmacy_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+#4
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'West_Los_Angeles_VA_Medical_Center':
+        layer.visible = True
+        West_LA_Medical_Center = layer
+    if layer.name == 'West_LA_Medical_Center_Route':
+        layer.visible = True
+        West_LA_Medical_Center_Route = layer
+    
+for row in arcpy.da.SearchCursor(West_LA_Medical_Center,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 5 min, Total Distance: 2.3 mil"
+
+for route in arcpy.da.SearchCursor(West_LA_Medical_Center_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
+#5
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'Total_Testing_Solutions_Century_City':
+        layer.visible = True
+        Total_Testing_Solutions = layer
+    if layer.name == 'Total_Testing_Solution_Route':
+        layer.visible = True
+        Total_Testing_Solutions_Route = layer
+    
+for row in arcpy.da.SearchCursor(Total_Testing_Solutions,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 5 min, Total Distance: 2.3 mil"
+
+for route in arcpy.da.SearchCursor(Total_Testing_Solutions_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
+#6
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'Rite_Aid':
+        layer.visible = True
+        Rite_Aid = layer
+    if layer.name == 'Rite_Aid_Route':
+        layer.visible = True
+        Rite_Aid_Route = layer
+    
+for row in arcpy.da.SearchCursor(Rite_Aid,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 3 min, Total Distance: 1.3 mil"
+
+for route in arcpy.da.SearchCursor(Rite_Aid_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
+#7
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'CVS_Weyburn':
+        layer.visible = True
+        CVS_Weyburn = layer
+    if layer.name == 'CVS_Weyburn_Route':
+        layer.visible = True
+        CVS_Weyburn_Route = layer
+    
+for row in arcpy.da.SearchCursor(CVS_Weyburn,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 3 min, Total Distance: 1.3 mil"
+
+for route in arcpy.da.SearchCursor(CVS_Weyburn_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+    
+#8
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'CVS_Wellworth':
+        layer.visible = True
+        CVS_Wellworth = layer
+    if layer.name == 'CVS_Wellworth_Route':
+        layer.visible = True
+        CVS_Wellworth_Route = layer
+    
+for row in arcpy.da.SearchCursor(CVS_Wellworth,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 4 min, Total Distance: 1.6 mil"
+
+for route in arcpy.da.SearchCursor(CVS_Wellworth_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
+#9
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'CVS_SanVicente':
+        layer.visible = True
+        CVS_San_Vicente = layer
+    if layer.name == 'CVS_San_Vicente_Route':
+        layer.visible = True
+        CVS_San_Vicente_Route = layer
+    
+for row in arcpy.da.SearchCursor(CVS_San_Vicente,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 6 min, Total Distance: 3.2 mil"
+
+for route in arcpy.da.SearchCursor(CVS_San_Vicente_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)   
+
+#10
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'Ralphs_Pharmacy_Weyburn':
+        layer.visible = True
+        Ralphs_Weyburn = layer
+    if layer.name == 'Ralphs_Weyburn':
+        layer.visible = True
+        Ralphs_Weyburn_Route = layer
+    
+for row in arcpy.da.SearchCursor(Ralphs_Weyburn,["name","fulladdr"]):
+    #get data frame
+    layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+    
+    title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+    title.text = "The Optimal Route from UCLA to One of the Nearest Vaccination Sites"
+    elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+    elm1.text = "Name: " + str(row[0])
+    elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+    elm2.text = "Address: " + str(row[1])
+    elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+    elm3.text = "Total Travel Time: 3 min, Total Distance: 1.3 mil"
+
+for route in arcpy.da.SearchCursor(Ralphs_Weyburn_Route, ["SHAPE@"]):
+    layout_frame.extent = route[0].extent # customize extent
+    layout_frame.scale = layout_frame.scale * 1.8 #customize zoom scale
+    
+    arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+    finalPDF.appendPages(tmpPDF)
+
 
 finalPDF.saveAndClose( )
 if os.path.exists(tmpPDF):
