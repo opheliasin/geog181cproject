@@ -47,7 +47,7 @@ Wheelchair = arcpy.GetParameterAsText(8)
 where_clause = "" #declare where_clause 
 
 if drive_thro: 
-  where_clause = where_clause + arcpy.AddFieldDelimiters("vac_sites", "drive_thro") + "= 'drive_thro'"
+  where_clause = where_clause + arcpy.AddFieldDelimiters("vac_sites", "drive_thro") + " = ' " + drive_thro + "' " 
 if appt_only: 
   where_clause = where_clause + arcpy.AddFieldDelimiters("vac_sites", "appt_only") + "= 'appt_only'"
 if call_first: 
