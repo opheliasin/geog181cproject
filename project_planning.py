@@ -68,6 +68,7 @@ print "Script completed successfully"
 
 
 ###########################RYUICHI########################################
+
 import arcpy 
 import os
 from arcpy import env
@@ -98,6 +99,32 @@ finalPDF = arcpy.mapping.PDFDocumentCreate(pdf_filename)
 
 tmpPDF = folderpath + "/tmp.pdf" #create temp pdf to store maps
 
+#Cover Page
+for layer in lyr_list:
+    if layer.name in site_names:
+        layer.visible = False
+    if layer.name in route_names:
+        layer.visible = False
+    if layer.name == 'Top_Ten_Nearest_Sites':
+        layer.visible == True
+        Vaccination_Sites = layer
+            
+layout_frame = arcpy.mapping.ListLayoutElements(mxd, "DATAFRAME_ELEMENT")[0]
+layout_frame.extent = [-118.47278579903, 34.0290659746133, -118.433498230254, 34.0780797244016]
+layout_frame.scale = layout_frame.scale * 1.4
+    
+title = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[3]
+title.text = "The Locations of the 10 Nearest Vaccination Sites from UCLA"
+elm1 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[1] 
+elm1.text = "Project by " + mxd.author
+elm2 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[2] 
+elm2.text = mxd.title
+elm3 = arcpy.mapping.ListLayoutElements(mxd, "TEXT_ELEMENT")[0]
+elm3.text = "Data Source: ArcGIS Hub and City of Los Angeles Hub"
+
+arcpy.mapping.ExportToPDF(mxd, tmpPDF)
+finalPDF.appendPages(tmpPDF)
+    
 #1   
 for layer in lyr_list:
     if layer.name in site_names:
@@ -434,7 +461,6 @@ if os.path.exists(tmpPDF):
 del mxd, tmpPDF, finalPDF, row,
 
 print "End of map production."
-
 
 ###########################CHALSEA########################################
 #Insert cursor to create and display new table showing 10 nearest vaccination sites with most relevant information for user
