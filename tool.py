@@ -28,21 +28,23 @@ pt.X = long #p[0]
 pt.Y = lat #p[1]
 ptGeom.append(arcpy.PointGeometry(pt))
 
-out_name = "starting_point.shp"
+starting_point_base = "starting_point.shp"
 geometry_type = "POINT"
 template = ""
 has_m = "DISABLED"
 has_z = "DISABLED"
 sr = arcpy.GetParameterAsText(4)
 
-scratch_name = arcpy.CreateScratchName("temp",
+
+starting_point_temp_name = arcpy.CreateScratchName("temp",
                                        "",
                                        "Shapefile",
                                        TEMP)
 
+
 #arcpy.CreateFeatureclass_management(TEMP, scratch_name, geometry_type, template, has_m, has_z, sr)
-out_geom = os.path.join(TEMP, scratch_name)
-arcpy.CopyFeatures_management(ptGeom, out_geom)
+out_starting_point = os.path.join(TEMP, starting_point_temp_name)
+arcpy.CopyFeatures_management(ptGeom, out_starting_point)
 
 arcpy.AddMessage("Finish setting up starting point.")
 
