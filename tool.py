@@ -104,22 +104,22 @@ env.workspace = TEMP
 env.overwriteOutput = True
     
 #Set local variables
-#inNetworkDataset = ... #insert network dataset here
-def getParameterInfo(self):
+inNetworkDataset = arcpy.GetParameterAsText(11)
+#def getParameterInfo(self):
     #Define parameter definitions
 
-    inNetworkDataset = arcpy.Parameter(
-        displayName="Network Dataset",
-        name="in_features",
-        datatype="GPFeatureLayer",
-        parameterType="Required",
-        direction="Input")
+ #   inNetworkDataset = arcpy.Parameter(
+  #      displayName="Network Dataset",
+  #     name="in_features",
+   #    datatype="GPFeatureLayer",
+    #    parameterType="Required",
+     #   direction="Input")
 
     return [inNetworkDataset]
 
 outNALayerName = "Closest_Facilities"
-impedanceAttribute = arcpy.GetParameterAsText(11)
-accumulateAttribute = arcpy.GetParameterAsText(12)
+impedanceAttribute = arcpy.GetParameterAsText(12)
+accumulateAttribute = arcpy.GetParameterAsText(13)
 inFacilities = vac_sites_selected
 inIncidents = starting_point_temp_name #insert location shp file here
 outLayerFile = TEMP + "/" + outNALayerName + ".lyr"
