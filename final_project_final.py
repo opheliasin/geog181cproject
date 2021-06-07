@@ -119,7 +119,7 @@ print "Shape file of routes has been exported."
 # define local variables
 originalSites = vac_sites_selected
 naSites = os.path.join(folder_path, "outNAlayer.shp")
-sortedSites = "vac_sites_selected_sorted.shp"
+top_10_closest_facilities = folder_path + "top_10_closest_facilities.shp" 
 outTable = "Ten_Nearest_Vaccination_Sites.dbf"
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'), \
              ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT'), \
