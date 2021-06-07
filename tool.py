@@ -161,8 +161,45 @@ arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 
 
 
+### Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user ###
 
+# define local variables
+originalSites = vac_sites_selected
+naSites = os.path.join(folder_path, "outNAlayer.shp")
+sortedSites = "vac_sites_selected_sorted.shp"
+outTable = "Ten_Nearest_Vaccination_Sites.dbf"
+newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
+             ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
 
+#join original table and network analysis table using common field to add distance and time fields
+arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Mile', 'Total_Time'])
+
+# sort original table by distance
+arcpy.Sort_management(originalSites, sortedSites, [["Total_Mile", "ASCENDING"]])
+
+# create a new table and add 8 new fields
+arcpy.CreateTable_management(folder_path, outTable)
+for field in newFields:
+    arcpy.AddField_management(outTable, field[0], field[1])
+
+# insert cursor for new table
+insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'PHONE', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'WHEELCHAIR', 'WEBSITE']
+insertCursor = arcpy.da.InsertCursor(outTable, insert)
+
+# search cursor and populate rows of new table using first 10 rows of sorted table
+originalFields = ['name', 'fulladdr', 'municipali', 'phone', 'operhours', 'drive_thro', 'appt_only', 'call_first',
+                  'Wheelchair', 'vaccine_ur']
+SQL = arcpy.AddFieldDelimiters(sortedSites, "FID") + "<= 9"
+searchCursor = arcpy.da.SearchCursor(sortedSites, originalFields, SQL)
+for row in searchCursor:
+    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]
+    insertCursor.insertRow(rows)
+
+# clean up local variables, cursors and cursor-related variables and unlock
+del originalSites, naSites, sortedSites, outTable, newFields, field, insert, insertCursor, originalFields, SQL, searchCursor, row, rows
+
+# to signal end of program
+print "Table successfully created!"
 
 
 
