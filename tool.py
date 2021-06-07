@@ -169,6 +169,18 @@ arcpy.conversion.FeatureClassToShapefile(outNAlayer, TEMP)
 routes = arcpy.mapping.ListLayers(outNALayer, "Routes")[0]
 arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 
+ID = ‘ObjectID’
+arcpy.CheckOutExtension("Spatial")
+
+arcpy.MakeFeatureLayer_management (routes, “CFRoutes”)
+
+with arcpy.da.SearchCursor(‘CFRoutes’,[ID]) as cursor:
+    for row in cursor:
+        ID = str(row[0])
+        #print ID
+        selRoutes = arcpy.SelectLayerByAttribute_management (“CFRoutes”, "NEW_SELECTION", '"ID" = {}'.format(ID))
+       arcpy.conversion.FeatureClassToShapefile(selRoutes, TEMP)
+
 #-------------------------------------------------------
 #Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user
 
