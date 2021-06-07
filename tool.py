@@ -169,7 +169,7 @@ arcpy.conversion.FeatureClassToShapefile(outNAlayer, TEMP)
 routes = arcpy.mapping.ListLayers(outNALayer, "Routes")[0]
 arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 
-ID = ‘ObjectID’
+ID = "ObjectID"
 arcpy.CheckOutExtension("Spatial")
 
 arcpy.MakeFeatureLayer_management (routes, “CFRoutes”)
