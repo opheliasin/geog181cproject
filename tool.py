@@ -179,7 +179,7 @@ with arcpy.da.SearchCursor("CFRoutes",[ID]) as cursor:
         ID = str(row[0])
         #print ID
         selRoutes = arcpy.SelectLayerByAttribute_management("CFRoutes", "NEW_SELECTION", '"ID" = {}'.format(ID))
-       arcpy.conversion.FeatureClassToShapefile(selRoutes, TEMP)
+        arcpy.conversion.FeatureClassToShapefile(selRoutes, TEMP)
 
 #-------------------------------------------------------
 #Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user
