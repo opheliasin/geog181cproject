@@ -20,11 +20,11 @@ env.overwriteOutput = True
     
 #Set local variables
 inNetworkDataset = folder_path+"/LA network/Other related dataset/LA_Network1_ND.nd"
-outNALayerName = "Vac_Sites"
+outNALayerName = "Closest_Facilities"
 impedanceAttribute = "Time"
 accumulateAttributeName = ["Miles"] 
 inFacilities = folder_path+"/Covid-19_Vaccination_Provider_Locations_in_the_United_States_cleaned_Mari/covid19_vaccination_sites_la_county.shp" 
-inIncidents = folder_path+"/Origin Point/origin_point.shp" #insert location shp file here
+inIncidents = folder_path+"/Origin Point/starting_point.shp" #insert location shp file here
 outLayerFile = folder_path + "/" + outNALayerName + ".lyr"
     
 #Create a new closest facility analysis layer. Apart from finding the drive 
@@ -58,13 +58,13 @@ arcpy.na.AddLocations(outNALayer, incidentsLayerName, inIncidents,
                           fieldMappings,"")
 
 #Solve the closest facility layer
-arcpy.na.Solve(outNALayer)
+arcpy.na.Solve(outNALayer, "SKIP", "CONTINUE", "50 MILES")
     
 #Save the solved closest facility layer as a layer file on disk with 
 #relative paths
 arcpy.management.SaveToLayerFile(outNALayer,outLayerFile,"RELATIVE")
     
-print "Script completed successfully"
+print "Closest facilities analysis is complete."
 
 #convert layer to shapefile
 arcpy.conversion.FeatureClassToShapefile(outNAlayer, folder_path)
