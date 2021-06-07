@@ -514,26 +514,28 @@ la_county = folderpath + "/data/County_Boundary/County_Boundary.shp"
 arcpy.MakeFeatureLayer_management(la_county, "la_county")
 arcpy.SelectLayerByLocation_management("vac_sites", "intersect", "la_county")
 
-p =[34.067565101060275, -118.45344143556794]
+long = 34.067565101060275
+lat = -118.45344143556794
 pt = arcpy.Point()
 ptGeom = [] 
-pt.X = p[0]
-pt.Y = p[1]
+pt.X = long
+pt.Y = lat 
 ptGeom.append(arcpy.PointGeometry(pt))
 
-out_path = folderpath
-out_name = "origin_point.shp"
+out_name = "starting_point.shp"
 geometry_type = "POINT"
 template = ""
 has_m = "DISABLED"
 has_z = "DISABLED"
 spatial_reference = arcpy.SpatialReference("NAD 1983")
 
-if os.path.exists(out_name):
-    os.remove(out_name)
+out_geom = os.path.join(folderpath, out_name)
 
-arcpy.CreateFeatureclass_management(out_path, out_name, geometry_type, template, has_m, has_z, spatial_reference)
-arcpy.CopyFeatures_management(ptGeoms, out_name)
+if os.path.exists(out_geom):
+    os.remove(out_geom)
+
+arcpy.CreateFeatureclass_management(folderpath, out_name, geometry_type, template, has_m, has_z, spatial_reference)
+arcpy.CopyFeatures_management(ptGeoms, out_geom)
 
 where_clause = arcpy.AddFieldDelimiters("vac_sites", "appt_only") + "= 'No'"
 
@@ -541,5 +543,5 @@ arcpy.SelectLayerByAttribute_management("vac_sites", "SUBSET_SELECTION", where_c
 
 vac_sites_selected = "vac_sites_selected.shp"
 arcpy.CreateFeatureclass_management(folderpath, vac_sites_selected, geometry_type, template, has_m, has_z, spatial_reference)
-arcpy.CopyFeatures_management("vac_sites", vac_sites_selected)
+arcpy.CopyFeatures_management("vac_sites", os.path.join(folderpath, vac_sites_selected) )
 
