@@ -172,9 +172,9 @@ arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 ID = "ObjectID"
 arcpy.CheckOutExtension("Spatial")
 
-arcpy.MakeFeatureLayer_management(routes, “CFRoutes”)
+arcpy.MakeFeatureLayer_management(routes, "CFRoutes")
 
-with arcpy.da.SearchCursor(‘CFRoutes’,[ID]) as cursor:
+with arcpy.da.SearchCursor('CFRoutes',[ID]) as cursor:
     for row in cursor:
         ID = str(row[0])
         #print ID
