@@ -6,7 +6,7 @@ from arcpy import env
 arcpy.CheckOutExtension("Network")
 
 # Set environment settings
-folder_path = "C:/Users/daisyyan/Desktop/Network_Analysis"
+folderpath = "C:/Users/daisyyan/Desktop/Network_Analysis"
 env.workspace = folder_path
 env.overwriteOutput = True
 
@@ -33,11 +33,11 @@ spatial_reference = arcpy.SpatialReference("NAD 1983")
 
 starting_point = os.path.join(folderpath, out_name)
 
-if os.path.exists(out_geom):
-    os.remove(out_geom)
+if os.path.exists(starting_point):
+    os.remove(starting_point)
 
 arcpy.CreateFeatureclass_management(folderpath, starting_point_base, geometry_type, template, has_m, has_z, spatial_reference)
-arcpy.CopyFeatures_management(ptGeoms, starting_point)
+arcpy.CopyFeatures_management(ptGeom, starting_point)
 
 where_clause = arcpy.AddFieldDelimiters("vac_sites", "appt_only") + "= 'No'"
 
