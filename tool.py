@@ -89,7 +89,7 @@ arcpy.CreateFeatureclass_management(vac_sites_selected_dir, vac_sites_selected_b
 #out_fc = os.path.join(folderpath, vac_sites_selected)
 arcpy.CopyFeatures_management("vac_sites", vac_sites_selected)
 
-arcpy.Delete_management(scratch_name)
+arcpy.Delete_management(starting_point_temp_name)
 
 arcpy.AddMessage("{0} has successfully outputted to .".format(vac_sites_selected_basename, vac_sites_selected_dir))
 
