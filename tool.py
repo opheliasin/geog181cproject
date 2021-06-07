@@ -198,7 +198,6 @@ insertCursor = arcpy.da.InsertCursor(outTable, insert)
 
 #search cursor and populate rows of new table using first 10 rows of sorted table
 originalFields = ['name', 'fulladdr', 'municipali', 'phone', 'operhours', 'drive_thro', 'appt_only', 'call_first', 'Wheelchair', 'vaccine_ur', 'Total_Mile', 'Total_Time']
-#SQL = arcpy.AddFieldDelimiters(sortedSites, "FID") + "<= 9"
 searchCursor = arcpy.da.SearchCursor(sortedSites, originalFields)
 for row in searchCursor:
     rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]
