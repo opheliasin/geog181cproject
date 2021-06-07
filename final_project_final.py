@@ -110,7 +110,8 @@ print "Script completed successfully"
 
 #convert "routes" layer to shapefile
 routes = arcpy.mapping.ListLayers(outNALayer, "Routes")[0]
-arcpy.conversion.FeatureClassToShapefile(routes, folder_path)
+routesOut = arcpy.conversion.FeatureClassToShapefile(routes, folder_path)
+routesOut.save(folder_path + "/" + routesOut + ".shp")
 
 print "Shape file of routes has been exported."
 
