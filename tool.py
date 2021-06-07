@@ -157,11 +157,8 @@ arcpy.conversion.FeatureClassToShapefile(outNAlayer, TEMP)
 routes = arcpy.mapping.ListLayers(outNALayer, "Routes")[0]
 arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 
-
-
-
-
-### Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user ###
+#-------------------------------------------------------
+#Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user
 
 # define local variables
 originalSites = vac_sites_selected
