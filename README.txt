@@ -5,7 +5,7 @@
 #Created on: 6/4/2021
 #----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#FOLDER CONTENTS
+#SUBMISSION FOLDER CONTENTS
 #1. Final_Report.pdf --> A pdf of our final report which describes the problem that our group has dealt with, our solution, the code design, the functionalities and performance
                             of the tool we developed, and a quick user’s manual.
 #2. Final_Presentation.pdf --> A pdf of the slides from our Google Slides presenation.
@@ -17,3 +17,12 @@
 #6. Example_Table.dbf --> A dbf table example output using UCLA as the origin location containing information for the 10 nearest vaccination sites including name, address,
                                 municipality, phone number, operational hours, drive through availability, appointment requirement, phone call first requirement, wheelchair 
                                 accessibility, and website for each vaccination site.
+#7. Layers_in_MXD.gdb --> A file geodatabase 
+#8. Datasets folder --> A folder containing all the files used by the tool.
+
+#DATASETS FOLDER CONTENTS
+#1. Atomated_Mapping
+#2. County_Boundary
+#3. COVID-19_Vaccination_Provides_Locations_in_the_United_States
+#4. LA_Network
+#5. LA_Streets
