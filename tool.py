@@ -5,6 +5,7 @@
 #
 #-----------------------------------------------
 import os
+import arcpy
 
 #set up environment
 TEMP = os.getenv("TEMP") # this is a folder Windows promises will exist
