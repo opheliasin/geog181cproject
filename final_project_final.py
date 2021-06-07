@@ -104,9 +104,9 @@ print
 
 
 # define local variables
-unsortedSites = vac_sites_selected
-sortedSites = "vac_sites_selected_sorted.shp"
+originalSites = vac_sites_selected
 naSites = os.path.join(folderPath, "outNAlayer.shp")
+sortedSites = "vac_sites_selected_sorted.shp"
 outTable = "Ten_Nearest_Vaccination_Sites.dbf"
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
              ('DRIVE_THRU', 'TEXT'), \
@@ -116,7 +116,7 @@ newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHO
 arcpy.JoinField_management(originalSites, 'name', naSites, 'name', ['dist mi'])
 
 # sort original table by distance
-arcpy.management.Sort(unsortedSites, sortedSites, [['dist mi', 'ASCENDING']])
+arcpy.management.Sort(originalSites, sortedSites, [['dist mi', 'ASCENDING']])
 
 # create a new table and add 8 new fields
 arcpy.CreateTable_management(folderPath, outTable)
