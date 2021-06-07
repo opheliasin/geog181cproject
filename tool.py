@@ -209,7 +209,7 @@ for row in searchCursor:
     rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]
     insertCursor.insertRow(rows)
 # clean up local variables, cursors and cursor-related variables and unlock
-del originalSites, naSites, sortedSites, outTable, newFields, field, insert, insertCursor, originalFields, SQL, searchCursor, row, rows
+del originalSites, naSites, sortedSites, outTable, newFields, field, insert, insertCursor, originalFields, searchCursor, row, rows
 
 # to signal end of program
 print "Table successfully created!"
