@@ -66,6 +66,9 @@ arcpy.management.SaveToLayerFile(outNALayer,outLayerFile,"RELATIVE")
     
 print "Script completed successfully"
 
+#convert layer to shapefile
+arcpy.conversion.FeatureClassToShapefile(outNAlayer, folder_path)
+
 
 ###########################RYUICHI########################################
 
