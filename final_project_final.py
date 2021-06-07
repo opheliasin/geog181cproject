@@ -106,8 +106,13 @@ arcpy.na.Solve(outNALayer)
 # relative paths
 arcpy.management.SaveToLayerFile(outNALayer, outLayerFile, "RELATIVE")
 
-print
-"Script completed successfully"
+print "Script completed successfully"
+
+#convert "routes" layer to shapefile
+routes = arcpy.mapping.ListLayers(outNALayer, "Routes")[0]
+arcpy.conversion.FeatureClassToShapefile(routes, folder_path)
+
+print "Shape file of routes has been exported."
 
 # Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user
 
