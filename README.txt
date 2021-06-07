@@ -12,4 +12,6 @@
 #3. tool_filename.py --> [description]
 #4. README.txt --> A text document that lists and describes all folders and files within the final submission folder for the Final GIS Programming Project of Geography 181C Spring 
                    2021 at UCLA.
-#5. 
+#5. final_project_mapbook.pdf --> A pdf mapbook example output using UCLA as the origin location, contains a title page and 10 route maps between the origin and a nearby vaccine 
+                                  site.
+
