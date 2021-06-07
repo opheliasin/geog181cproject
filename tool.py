@@ -115,7 +115,7 @@ inNetworkDataset = arcpy.GetParameterAsText(11)
     #    parameterType="Required",
      #   direction="Input")
 
-    return [inNetworkDataset]
+#return [inNetworkDataset]
 
 outNALayerName = "Closest_Facilities"
 impedanceAttribute = arcpy.GetParameterAsText(12)
