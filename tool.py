@@ -165,7 +165,7 @@ arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 
 # define local variables
 originalSites = vac_sites_selected
-naSites = os.path.join(folder_path, "outNAlayer.shp")
+naSites = os.path.join(TEMP, "outNAlayer.shp")
 sortedSites = "vac_sites_selected_sorted.shp"
 outTable = "Ten_Nearest_Vaccination_Sites.dbf"
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
@@ -178,7 +178,7 @@ arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', [
 arcpy.Sort_management(originalSites, sortedSites, [["Total_Mile", "ASCENDING"]])
 
 # create a new table and add 8 new fields
-arcpy.CreateTable_management(folder_path, outTable)
+arcpy.CreateTable_management(TEMP, outTable)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
 
