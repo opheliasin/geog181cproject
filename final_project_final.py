@@ -122,10 +122,10 @@ newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHO
              ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
 
 #join original table and network analysis table to add distance field
-arcpy.JoinField_management(originalSites, 'name', naSites, 'name', ['dist mi'])
+arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Miles', 'Total_Time'])
 
 # sort original table by distance
-arcpy.management.Sort(originalSites, sortedSites, [['dist mi', 'ASCENDING']])
+arcpy.management.Sort(originalSites, sortedSites, [['Total_Miles', 'ASCENDING']])
 
 # create a new table and add 8 new fields
 arcpy.CreateTable_management(folderPath, outTable)
