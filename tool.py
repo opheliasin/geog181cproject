@@ -106,6 +106,9 @@ print "Closest facilities analysis is complete."
 #convert layer to shapefile
 arcpy.conversion.FeatureClassToShapefile(outNAlayer, TEMP)
 
+routes = arcpy.mapping.ListLayers(outNALayer, "Routes")[0]
+arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
+
 #-----------------------------------------------
 
 # arcpy.CreateFeatureclass_management(folderpath, out_name, geometry_type, template, has_m, has_z, sr)
