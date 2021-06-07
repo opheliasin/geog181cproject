@@ -178,7 +178,8 @@ naSites = os.path.join(TEMP, "outNAlayer.shp")
 top_10_closest_facilities = TEMP + "top_10_closest_facilities.shp" 
 outTable = arcpy.GetParameterAsText(13) #path 
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
-             ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
+             ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT'), ('TOTAL_MILE', 'DOUBLE'),\
+            ('TOTAL_TIME', 'DOUBLE')]
 
 #join original table and network analysis table using common field to add distance and time fields
 #arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Mile', 'Total_Time'])
@@ -197,16 +198,16 @@ for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
 
 # insert cursor for new table
-insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'PHONE', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'WHEELCHAIR', 'WEBSITE']
+insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'PHONE', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'WHEELCHAIR', 'WEBSITE', 'TOTAL_MILE', 'TOTAL_TIME']
 insertCursor = arcpy.da.InsertCursor(outTable, insert)
 
 # search cursor and populate rows of new table using first 10 rows of sorted table
 originalFields = ['name', 'fulladdr', 'municipali', 'phone', 'operhours', 'drive_thro', 'appt_only', 'call_first',
-                  'Wheelchair', 'vaccine_ur']
+                  'Wheelchair', 'vaccine_ur', 'Total_Mile', 'Total_Time']
 SQL = arcpy.AddFieldDelimiters(sortedSites, "FID") + "<= 9"
 searchCursor = arcpy.da.SearchCursor(sortedSites, originalFields, SQL)
 for row in searchCursor:
-    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]
+    rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11]
     insertCursor.insertRow(rows)
 
 # clean up local variables, cursors and cursor-related variables and unlock
