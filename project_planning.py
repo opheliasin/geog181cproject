@@ -463,36 +463,38 @@ del mxd, tmpPDF, finalPDF, row,
 print "End of map production."
 
 ###########################CHALSEA########################################
-#Insert cursor to create and display new table showing 10 nearest vaccination sites with most relevant information for user
-#need a table with 'distance' field added beforehand
+#Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user
 
-folderPath = r"C:\Users\cnmre\OneDrive\Documents\181C GIS Programming and Dev\Covid-19_Vaccination_Provider_Locations_in_the_United_States"
+#set folder path
+folderPath = r"C:\Users\cnmre\OneDrive\Documents\181C GIS Programming and Dev"
 
+#import system modules
 import arcpy, os
 
+#define workspace and allow overwriting output files
 arcpy.env.workspace = folderPath
 arcpy.overwriteOutput = True
 
 #define local variables
-unsortedSites = os.path.join(folderPath, "Covid-19_Vaccination_Provider_Locations_in_the_United_States.shp")
-sortedSites = "US_Covid19_Vaccination_Sites_sorted.shp"
-outTable = "Top_Ten_Nearest_Vaccination_Sites.dbf"
+unsortedSites = os.path.join(folderPath, "vac_sites_selected.shp")
+sortedSites = "vac_sites_selected_sorted.shp"
+outTable = "Ten_Nearest_Vaccination_Sites.dbf"
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),('DRIVE_THRU', 'TEXT'), \
              ('APPT_REQ', 'TEXT'),('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
 
-#sort original table **change name field to distance**
-arcpy.management.Sort(unsortedSites, sortedSites, [['name', 'ASCENDING']])
+#sort original table by distance
+arcpy.management.Sort(unsortedSites, sortedSites, [['distance m', 'ASCENDING']])
 
 #create a new table and add 8 new fields
 arcpy.CreateTable_management(folderPath, outTable)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
 
-#insert cursor
+#insert cursor for new table
 insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'PHONE', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'WHEELCHAIR', 'WEBSITE']
 insertCursor = arcpy.da.InsertCursor(outTable, insert)
 
-#search cursor and populate rows for top 10 rows
+#search cursor and populate rows of new table using first 10 rows of sorted table
 originalFields = ['name', 'fulladdr', 'municipali', 'phone', 'operhours', 'drive_thro', 'appt_only', 'call_first', 'Wheelchair', 'vaccine_ur']
 SQL = arcpy.AddFieldDelimiters(sortedSites, "FID") + "<= 9"
 searchCursor = arcpy.da.SearchCursor(sortedSites, originalFields, SQL)
