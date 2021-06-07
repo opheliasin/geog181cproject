@@ -109,7 +109,7 @@ outNALayerName = "Closest_Facilities"
 #impedanceAttribute = "" #insert corresponding impendance attribute here
 #accumulateAttributeName = [] #insert corresponding accumulate attribute name here
 inFacilities = vac_sites_selected
-inIncidents = TEMP+"/starting_point" #insert location shp file here
+inIncidents = starting_point_temp_name #insert location shp file here
 outLayerFile = TEMP + "/" + outNALayerName + ".lyr"
     
 #Create a new closest facility analysis layer. Apart from finding the drive 
