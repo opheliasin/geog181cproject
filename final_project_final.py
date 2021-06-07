@@ -114,32 +114,29 @@ arcpy.conversion.FeatureClassToShapefile(routes, folder_path)
 
 print "Shape file of routes has been exported."
 
-# Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user
-
+### Table Manipulation with Cursors - create new table showing 10 nearest vaccination sites with most relevant information for user ###
 
 # define local variables
 originalSites = vac_sites_selected
-naSites = os.path.join(folderPath, "outNAlayer.shp")
+naSites = os.path.join(folder_path, "outNAlayer.shp")
 sortedSites = "vac_sites_selected_sorted.shp"
 outTable = "Ten_Nearest_Vaccination_Sites.dbf"
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
-             ('DRIVE_THRU', 'TEXT'), \
-             ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
+             ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
 
-#join original table and network analysis table to add distance field
-arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Miles', 'Total_Time'])
+#join original table and network analysis table using common field to add distance and time fields
+arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Mile', 'Total_Time'])
 
 # sort original table by distance
-arcpy.management.Sort(originalSites, sortedSites, [['Total_Miles', 'ASCENDING']])
+arcpy.Sort_management(originalSites, sortedSites, [["Total_Mile", "ASCENDING"]])
 
 # create a new table and add 8 new fields
-arcpy.CreateTable_management(folderPath, outTable)
+arcpy.CreateTable_management(folder_path, outTable)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
 
 # insert cursor for new table
-insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'PHONE', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'WHEELCHAIR',
-          'WEBSITE']
+insert = ['NAME', 'ADDRESS', 'MUNICIPAL', 'PHONE', 'OPER_HRS', 'DRIVE_THRU', 'APPT_REQ', 'CALL_REQ', 'WHEELCHAIR', 'WEBSITE']
 insertCursor = arcpy.da.InsertCursor(outTable, insert)
 
 # search cursor and populate rows of new table using first 10 rows of sorted table
@@ -151,14 +148,14 @@ for row in searchCursor:
     rows = row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9]
     insertCursor.insertRow(rows)
 
-# clean up and unlock
-del field, insertCursor, searchCursor, row, rows
+# clean up local variables, cursors and cursor-related variables and unlock
+del originalSites, naSites, sortedSites, outTable, newFields, field, insert, insertCursor, originalFields, SQL, searchCursor, row, rows
 
 # to signal end of program
 print "Table successfully created!"
 
 
-#### RYUICHI
+### RYUICHI
 # get the mxd and the layout element list
 mxd = arcpy.mapping.MapDocument(folderpath + "/Final_Project_Mapping.mxd")
 
