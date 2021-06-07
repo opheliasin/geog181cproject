@@ -45,6 +45,69 @@ arcpy.CopyFeatures_management(ptGeom, out_geom)
 
 arcpy.AddMessage("Finish setting up starting point.")
 
+#-----------------------------------------------
+# Network Analysis
+
+#Check out the Network Analyst extension license
+arcpy.CheckOutExtension("Network")
+
+#Set environment settings
+env.workspace = TEMP
+env.overwriteOutput = True
+    
+#Set local variables
+#inNetworkDataset = ... #insert network dataset here
+outNALayerName = "Closest_Facilities"
+#impedanceAttribute = "" #insert corresponding impendance attribute here
+#accumulateAttributeName = [] #insert corresponding accumulate attribute name here
+#inFacilities = ... #insert facilities shp file here
+inIncidents = TEMP+"/starting_point.shp" #insert location shp file here
+outLayerFile = TEMP + "/" + outNALayerName + ".lyr"
+    
+#Create a new closest facility analysis layer. Apart from finding the drive 
+#time to the closest warehouse, we also want to find the total distance. So
+#we will accumulate the "Miles" impedance attribute.
+outNALayer = arcpy.na.MakeClosestFacilityLayer(inNetworkDataset,outNALayerName,
+                                                   impedanceAttribute,"TRAVEL_TO",
+                                                   "",10, accumulateAttributeName,
+                                                   "NO_UTURNS")
+    
+#Get the layer object from the result object. The closest facility layer can 
+#now be referenced using the layer object.
+outNALayer = outNALayer.getOutput(0)
+
+#Get the names of all the sublayers within the closest facility layer.
+sublayer_names = arcpy.na.GetNAClassNames(outNALayer)
+
+#Stores the layer names that we will use later
+facilitiesLayerName = sublayer_names["Facilities"]
+incidentsLayerName = sublayer_names["Incidents"]
+    
+#Load the warehouses as Facilities using the default field mappings and 
+#search tolerance
+arcpy.na.AddLocations(outNALayer, facilitiesLayerName, inFacilities, "", "")
+    
+#Load user location as incident. Map the Name property from the NOM field
+#using field mappings
+fieldMappings = arcpy.na.NAClassFieldMappings(outNALayer, incidentsLayerName)
+fieldMappings["Name"].mappedFieldName = "NOM"
+arcpy.na.AddLocations(outNALayer, incidentsLayerName, inIncidents,
+                          fieldMappings,"")
+
+#Solve the closest facility layer
+arcpy.na.Solve(outNALayer, "SKIP", "CONTINUE")
+    
+#Save the solved closest facility layer as a layer file on disk with 
+#relative paths
+arcpy.management.SaveToLayerFile(outNALayer,outLayerFile,"RELATIVE")
+    
+print "Closest facilities analysis is complete."
+
+#convert layer to shapefile
+arcpy.conversion.FeatureClassToShapefile(outNAlayer, TEMP)
+
+#-----------------------------------------------
+
 # arcpy.CreateFeatureclass_management(folderpath, out_name, geometry_type, template, has_m, has_z, sr)
 # out_geom = os.path.join(folderpath, out_name)
 # arcpy.CopyFeatures_management(ptGeom, out_geom)
