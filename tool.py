@@ -188,7 +188,7 @@ with arcpy.da.SearchCursor(‘CFRoutes’,[ID]) as cursor:
 originalSites = vac_sites_selected
 naSites = os.path.join(TEMP, "outNAlayer.shp")
 top_10_closest_facilities = TEMP + "top_10_closest_facilities.shp" 
-outTable = arcpy.GetParameterAsText(13) #path 
+outTable = arcpy.GetParameterAsText(14) #path 
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
              ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT'), ('TOTAL_MILE', 'DOUBLE'),\
             ('TOTAL_TIME', 'DOUBLE')]
