@@ -181,13 +181,8 @@ newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHO
              ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT'), ('TOTAL_MILE', 'DOUBLE'),\
             ('TOTAL_TIME', 'DOUBLE')]
 
-#join original table and network analysis table using common field to add distance and time fields
-#arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Mile', 'Total_Time'])
+#join original table and network analysis table 
 arcpy.SpatialJoin_analysis(originalSites, naSites, top_10_closest_facilities, "JOIN_ONE_TO_ONE", "KEEP_COMMON")
-
-
-# sort original table by distance
-#arcpy.Sort_management(originalSites, sortedSites, [["Total_Mile", "ASCENDING"]])
 
 outTable_dir = os.path.dirname(outTable)
 outTable_base = os.path.basename(outTable)
