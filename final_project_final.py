@@ -6,18 +6,18 @@ from arcpy import env
 arcpy.CheckOutExtension("Network")
 
 # Set environment settings
-folderpath = "C:/Users/daisyyan/Desktop/Network_Analysis"
+folder_path = r"C:\Users\Ophelia\geog181cproject"
 env.workspace = folder_path
 env.overwriteOutput = True
 
-vac_sites = folderpath + "/data/Covid-19_Vaccination_Provider_Locations_in_the_United_States/Covid-19_Vaccination_Provider_Locations_in_the_United_States.shp"
+vac_sites = folder_path + "/data/Covid-19_Vaccination_Provider_Locations_in_the_United_States/Covid-19_Vaccination_Provider_Locations_in_the_United_States.shp"
 arcpy.MakeFeatureLayer_management(vac_sites, "vac_sites")
-la_county = folderpath + "/data/County_Boundary/County_Boundary.shp"
+la_county = folder_path + "/data/County_Boundary/County_Boundary.shp"
 arcpy.MakeFeatureLayer_management(la_county, "la_county")
 arcpy.SelectLayerByLocation_management("vac_sites", "intersect", "la_county")
 
-long = 34.067565101060275
-lat = -118.45344143556794
+long = -118.45344143556794
+lat = 34.067565101060275
 pt = arcpy.Point()
 ptGeom = []
 pt.X = long
@@ -29,26 +29,35 @@ geometry_type = "POINT"
 template = ""
 has_m = "DISABLED"
 has_z = "DISABLED"
-spatial_reference = arcpy.SpatialReference("NAD 1983")
+sr = arcpy.SpatialReference(4269)
 
-starting_point = os.path.join(folderpath, out_name)
+starting_point = os.path.join(folder_path, starting_point_base)
 
 if os.path.exists(starting_point):
     os.remove(starting_point)
 
-arcpy.CreateFeatureclass_management(folderpath, starting_point_base, geometry_type, template, has_m, has_z, spatial_reference)
+arcpy.CreateFeatureclass_management(folder_path, starting_point_base, geometry_type, template, has_m, has_z, sr)
 arcpy.CopyFeatures_management(ptGeom, starting_point)
+
+starting_point_spatial_ref = arcpy.Describe(starting_point).spatialReference
+if starting_point_spatial_ref.name == "Unknown":
+    arcpy.management.DefineProjection(starting_point, sr)
+arcpy.RecalculateFeatureClassExtent_management(starting_point)
 
 where_clause = arcpy.AddFieldDelimiters("vac_sites", "appt_only") + "= 'No'"
 
 arcpy.SelectLayerByAttribute_management("vac_sites", "SUBSET_SELECTION", where_clause)
 
 vac_sites_selected_base = "vac_sites_selected.shp"
-arcpy.CreateFeatureclass_management(folderpath, vac_sites_selected_base, geometry_type, template, has_m, has_z,
-                                    spatial_reference)
-vac_sites_selected = os.path.join(folderpath, vac_sites_selected)
+vac_sites_selected = os.path.join(folder_path, vac_sites_selected_base)
 
-arcpy.CopyFeatures_management("vac_sites", os.path.join(folderpath, vac_sites_selected))
+arcpy.CreateFeatureclass_management(folder_path, vac_sites_selected_base, geometry_type, template, has_m, has_z,
+                                    sr)
+
+vac_sites_selected_spatial_ref = arcpy.Describe(vac_sites_selected).spatialReference
+if vac_sites_selected_spatial_ref.name == "Unknown":
+    arcpy.management.DefineProjection(vac_sites_selected, sr)
+arcpy.CopyFeatures_management("vac_sites", vac_sites_selected)
 
 
 # Set local variables
