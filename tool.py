@@ -108,14 +108,14 @@ env.overwriteOutput = True
 def getParameterInfo(self):
     #Define parameter definitions
 
-    param = arcpy.Parameter(
+    inNetworkDataset = arcpy.Parameter(
         displayName="Network Dataset",
         name="in_features",
         datatype="GPFeatureLayer",
         parameterType="Required",
         direction="Input")
 
-    return [param]
+    return [inNetworkDataset]
 
 outNALayerName = "Closest_Facilities"
 impedanceAttribute = arcpy.GetParameterAsText(11)
@@ -175,19 +175,24 @@ arcpy.conversion.FeatureClassToShapefile(routes, TEMP)
 # define local variables
 originalSites = vac_sites_selected
 naSites = os.path.join(TEMP, "outNAlayer.shp")
-sortedSites = "vac_sites_selected_sorted.shp"
-outTable = "Ten_Nearest_Vaccination_Sites.dbf"
+top_10_closest_facilities = TEMP + "top_10_closest_facilities.shp" 
+outTable = arcpy.GetParameterAsText(13) #path 
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
              ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT')]
 
 #join original table and network analysis table using common field to add distance and time fields
-arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Mile', 'Total_Time'])
+#arcpy.JoinField_management(originalSites, 'facilityid', naSites, 'FacilityID', ['Total_Mile', 'Total_Time'])
+arcpy.SpatialJoin_analysis(originalSites, naSites, top_10_closest_facilities, "JOIN_ONE_TO_ONE", "KEEP_COMMON")
+
 
 # sort original table by distance
-arcpy.Sort_management(originalSites, sortedSites, [["Total_Mile", "ASCENDING"]])
+#arcpy.Sort_management(originalSites, sortedSites, [["Total_Mile", "ASCENDING"]])
+
+outTable_dir = os.path.dirname(outTable)
+outTable_base = os.path.basename(outTable)
 
 # create a new table and add 8 new fields
-arcpy.CreateTable_management(TEMP, outTable)
+arcpy.CreateTable_management(outTable_dir, outTable_base)
 for field in newFields:
     arcpy.AddField_management(outTable, field[0], field[1])
 
