@@ -79,7 +79,7 @@ elif wheelchair == 'No':
     where_clause = where_clause + arcpy.AddFieldDelimiters("vac_sites", "wheelchair") + "= 'No'"
 
 arcpy.SelectLayerByAttribute_management("vac_sites", "SUBSET_SELECTION", where_clause)
-vac_sites_selected = arcpy.GetParameterAsText(10)
+vac_sites_selected = arcpy.GetParameterAsText(9)
 
 vac_sites_selected_dir = os.path.dirname(vac_sites_selected)
 vac_sites_selected_basename = os.path.basename(vac_sites_selected)
@@ -104,7 +104,7 @@ env.workspace = TEMP
 env.overwriteOutput = True
     
 #Set local variables
-inNetworkDataset = arcpy.GetParameterAsText(11)
+inNetworkDataset = arcpy.GetParameterAsText(10)
 #def getParameterInfo(self):
     #Define parameter definitions
 
@@ -118,8 +118,8 @@ inNetworkDataset = arcpy.GetParameterAsText(11)
 #return [inNetworkDataset]
 
 outNALayerName = "Closest_Facilities"
-impedanceAttribute = arcpy.GetParameterAsText(12)
-accumulateAttribute = arcpy.GetParameterAsText(13)
+impedanceAttribute = arcpy.GetParameterAsText(11)
+accumulateAttribute = arcpy.GetParameterAsText(12)
 inFacilities = vac_sites_selected
 inIncidents = starting_point_temp_name #insert location shp file here
 outLayerFile = TEMP + "/" + outNALayerName + ".lyr"
@@ -188,7 +188,7 @@ with arcpy.da.SearchCursor("CFRoutes",[ID]) as cursor:
 originalSites = vac_sites_selected
 naSites = os.path.join(TEMP, "outNAlayer.shp")
 top_10_closest_facilities = TEMP + "top_10_closest_facilities.shp" 
-outTable = arcpy.GetParameterAsText(14) #path 
+outTable = arcpy.GetParameterAsText(13) #path 
 newFields = [('NAME', 'TEXT'), ('ADDRESS', 'TEXT'), ('MUNICIPAL', 'TEXT'), ('PHONE', 'TEXT'), ('OPER_HRS', 'TEXT'),
              ('DRIVE_THRU', 'TEXT'), ('APPT_REQ', 'TEXT'), ('CALL_REQ', 'TEXT'), ('WHEELCHAIR', 'TEXT'), ('WEBSITE', 'TEXT'), ('TOTAL_MILE', 'DOUBLE'),\
             ('TOTAL_TIME', 'DOUBLE')]
