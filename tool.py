@@ -105,9 +105,21 @@ env.overwriteOutput = True
     
 #Set local variables
 #inNetworkDataset = ... #insert network dataset here
+def getParameterInfo(self):
+    #Define parameter definitions
+
+    param = arcpy.Parameter(
+        displayName="Network Dataset",
+        name="in_features",
+        datatype="GPFeatureLayer",
+        parameterType="Required",
+        direction="Input")
+
+    return [param]
+
 outNALayerName = "Closest_Facilities"
-#impedanceAttribute = "" #insert corresponding impendance attribute here
-#accumulateAttributeName = [] #insert corresponding accumulate attribute name here
+impedanceAttribute = arcpy.GetParameterAsText(11)
+accumulateAttribute = arcpy.GetParameterAsText(12)
 inFacilities = vac_sites_selected
 inIncidents = starting_point_temp_name #insert location shp file here
 outLayerFile = TEMP + "/" + outNALayerName + ".lyr"
