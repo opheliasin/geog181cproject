@@ -16,7 +16,7 @@ Created on: 6/4/2021
 8. Datasets folder --> A folder containing all the files used by the tool.
 
 ## DATASETS FOLDER CONTENTS
-1. Atomated_Mapping
+1. Automated_Mapping
 2. County_Boundary
 3. COVID-19_Vaccination_Provides_Locations_in_the_United_States
 4. LA_Network
