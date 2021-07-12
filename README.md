@@ -1,6 +1,8 @@
 # READ ME
 Description: This text document lists and describes all folders and files within this final submission folder for the Final GIS Programming Project of Geography 181C Spring 2021 at UCLA.
+
 Created by: Mari Bouwman, Chalsea Montellano, Ryuichi Utsu, Ophelia Sin, Daisy Yan
+
 Created on: 6/4/2021
 
 ## SUBMISSION FOLDER CONTENTS
