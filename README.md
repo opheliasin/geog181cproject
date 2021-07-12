@@ -1,4 +1,4 @@
-# READ ME
+# GEOG 181C Spring 2021 Final Project
 Description: This text document lists and describes all folders and files within this final submission folder for the Final GIS Programming Project of Geography 181C Spring 2021 at UCLA.
 
 Created by: Mari Bouwman, Chalsea Montellano, Ryuichi Utsu, Ophelia Sin, Daisy Yan
